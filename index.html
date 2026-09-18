@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>MMNO Memos</title>
+
+<!-- Bootstrap 5 -->
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+>
+
+<!-- Bootstrap Icons -->
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+>
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="css/style.css">
+</link>
+
+</head>
+
+<body>
+
+
+<!-- Navbar -->
+<nav class="navbar bg-body-tertiary border-bottom sticky-top">
+    <div class="container">
+
+        <a class="navbar-brand fw-bold" href="#">
+            <i class="bi bi-journal-text"></i>
+            My Memos
+        </a>
+
+        <button
+            class="btn btn-outline-secondary"
+            id="themeButton"
+            type="button"
+            title="Toggle dark mode"
+        >
+            <i class="bi bi-moon"></i>
+        </button>
+
+    </div>
+</nav>
+
+
+<!-- Main -->
+<main class="container py-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="h3 mb-1">MMNO Memos</h1>
+            <p class="text-body-secondary mb-0">
+                Let's create memos for me.
+            </p>
+        </div>
+
+        <button
+            class="btn btn-primary"
+            id="newMemoButton"
+            type="button"
+        >
+            <i class="bi bi-plus-lg"></i>
+            <span class="d-none d-sm-inline">
+                New Memo
+            </span>
+        </button>
+
+    </div>
+
+
+    <!-- Search -->
+    <div class="mb-3">
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-search"></i>
+            </span>
+
+            <input
+                type="search"
+                id="searchInput"
+                class="form-control"
+                placeholder="Search memos..."
+                autocomplete="off"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+    <div class="row g-2 mb-4">
+
+        <div class="col-12 col-sm-6">
+
+            <select
+                id="categoryFilter"
+                class="form-select"
+            >
+                <option value="all">
+                    All Categories
+                </option>
+
+                <option value="Personal">
+                    Personal
+                </option>
+
+                <option value="Work">
+                    Work
+                </option>
+
+                <option value="Shopping">
+                    Shopping
+                </option>
+
+                <option value="Other">
+                    THA
+                </option>
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="col-12 col-sm-6">
+
+            <select
+                id="sortSelect"
+                class="form-select"
+            >
+                <option value="updated">
+                    Recently Updated
+                </option>
+
+                <option value="created">
+                    Recently Created
+                </option>
+
+                <option value="oldest">
+                    Oldest
+                </option>
+
+                <option value="az">
+                    A-Z
+                </option>
+
+                <option value="pinned">
+                    Pinned First
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- Memo count -->
+    <div class="d-flex justify-content-between mb-3">
+
+        <span
+            class="text-body-secondary"
+            id="memoCount"
+        >
+            0 memos
+        </span>
+
+    </div>
+
+
+    <!-- Memo List -->
+    <div id="memoList" class="row g-4"></div>
+
+
+    <!-- Empty State -->
+    <div
+        id="emptyState"
+        class="text-center py-5 d-none"
+    >
+        <i class="bi bi-journal-x empty-icon"></i>
+
+        <h3 class="h5 mt-3">
+            No memos found
+        </h3>
+
+        <p class="text-body-secondary">
+            Create your first memo.
+        </p>
+
+        <button
+            class="btn btn-primary"
+            id="emptyCreateButton"
+        >
+            <i class="bi bi-plus-lg"></i>
+            Create Memo
+        </button>
+
+    </div>
+
+</main>
+
+<!-- View Memo Modal -->
+<div
+    class="modal fade"
+    id="viewMemoModal"
+    tabindex="-1"
+    aria-labelledby="viewMemoModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <!-- Header -->
+            <div class="modal-header">
+
+                <div class="d-flex align-items-center gap-2">
+
+                    <div class="view-memo-avatar">
+                        <i class="bi bi-journal-text"></i>
+                    </div>
+
+                    <div>
+                        <h5
+                            class="modal-title mb-0"
+                            id="viewMemoModalLabel"
+                        >
+                            Memo
+                        </h5>
+
+                        <small
+                            class="text-body-secondary"
+                            id="viewMemoDate"
+                        ></small>
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <!-- Body -->
+            <div class="modal-body p-0">
+
+                <!-- Memo information -->
+                <div class="px-4 pt-4">
+
+                    <div
+                        class="d-flex flex-wrap align-items-center gap-2 mb-3"
+                    >
+
+                        <span
+                            class="badge bg-secondary"
+                            id="viewMemoCategory"
+                        >
+                        </span>
+
+                        <span
+                            class="badge bg-primary d-none"
+                            id="viewMemoPinned"
+                        >
+                            <i class="bi bi-pin-angle-fill me-1"></i>
+                            Pinned
+                        </span>
+
+                    </div>
+
+
+                    <!-- Title -->
+                    <h2
+                        class="h4 mb-3"
+                        id="viewMemoTitle"
+                    ></h2>
+
+
+                    <!-- Content -->
+                    <div
+                        class="memo-full-content mb-4"
+                        id="viewMemoContent"
+                    ></div>
+
+                </div>
+
+
+                <!-- Facebook-style photo gallery -->
+                <div
+                    id="viewMemoImages"
+                    class="facebook-gallery"
+                ></div>
+
+            </div>
+
+
+            <!-- Footer -->
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Close
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="viewMemoEditButton"
+                >
+                    <i class="bi bi-pencil me-1"></i>
+                    Edit
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<!-- Image Viewer Modal -->
+<div
+    class="modal fade"
+    id="imageViewerModal"
+    tabindex="-1"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+
+        <div class="modal-content bg-dark">
+
+            <div class="modal-header border-0">
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white ms-auto"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+            <div
+                class="modal-body text-center p-2"
+            >
+
+                <img
+                    id="viewerImage"
+                    src=""
+                    alt="Memo image"
+                    class="img-fluid rounded"
+                    style="
+                        max-height: 80vh;
+                        object-fit: contain;
+                    "
+                >
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<!-- Create/Edit Memo Modal -->
+<div
+    class="modal fade"
+    id="memoModal"
+    tabindex="-1"
+    aria-labelledby="memoModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title"
+                    id="memoModalLabel"
+                >
+                    Create Memo
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <form id="memoForm">
+
+                <div class="modal-body">
+
+                    <!-- Hidden ID -->
+                    <input
+                        type="hidden"
+                        id="memoId"
+                    >
+
+
+                    <!-- Title -->
+                    <div class="mb-3">
+
+                        <label
+                            for="memoTitle"
+                            class="form-label"
+                        >
+                            Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="memoTitle"
+                            class="form-control"
+                            placeholder="Enter memo title"
+                            maxlength="100"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Content -->
+                    <div class="mb-3">
+
+                        <label
+                            for="memoContent"
+                            class="form-label"
+                        >
+                            Content
+                        </label>
+
+                        <textarea
+                            id="memoContent"
+                            class="form-control"
+                            rows="6"
+                            placeholder="Write your memo..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- Category -->
+                    <div class="mb-3">
+
+                        <label
+                            for="memoCategory"
+                            class="form-label"
+                        >
+                            Category
+                        </label>
+
+                        <select
+                            id="memoCategory"
+                            class="form-select"
+                        >
+
+                            <option value="Personal">
+                                Personal
+                            </option>
+
+
+
+                            <option value="Work">
+                                Work
+                            </option>
+
+
+
+                            <option value="Shopping">
+                                Shopping
+                            </option>
+                            <option value="Shopping">
+                                THA
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label
+                            for="memoImages"
+                            class="form-label"
+                        >
+                            Images
+                        </label>
+
+                        <input
+                            type="file"
+                            id="memoImages"
+                            class="form-control"
+                            accept="image/jpeg,image/png,image/webp"
+                            multiple
+                        >
+
+                        <div class="form-text">
+                            JPG, PNG or WebP. Maximum 5 MB per image.
+                        </div>
+
+                        <div
+                            id="imagePreview"
+                            class="row g-2 mt-2"
+                        ></div>
+                    </div>
+                    <!-- Pin -->
+                    <div class="form-check">
+
+                        <input
+                            type="checkbox"
+                            class="form-check-input"
+                            id="memoPinned"
+                        >
+
+                        <label
+                            class="form-check-label"
+                            for="memoPinned"
+                        >
+                            Pin this memo
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-check-lg"></i>
+                        Save Memo
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+<div
+    class="modal fade"
+    id="deleteModal"
+    tabindex="-1"
+    aria-labelledby="deleteModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title"
+                    id="deleteModalLabel"
+                >
+                    Delete Memo
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <p class="mb-0">
+                    Are you sure you want to delete this memo?
+                </p>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    id="confirmDeleteButton"
+                >
+                    <i class="bi bi-trash"></i>
+                    Delete
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Toast -->
+<div
+    class="toast-container position-fixed bottom-0 end-0 p-3"
+>
+
+    <div
+        id="toast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+    >
+
+        <div class="toast-header">
+
+            <i class="bi bi-check-circle me-2"></i>
+
+            <strong class="me-auto">
+                Memo
+            </strong>
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="toast"
+                aria-label="Close"
+            ></button>
+
+        </div>
+
+        <div
+            class="toast-body"
+            id="toastMessage"
+        >
+            Done.
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Bootstrap JS -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script
+    type="module"
+    src="./js/app.js">
+</script>
+
+
+</body>
+
+</html>
